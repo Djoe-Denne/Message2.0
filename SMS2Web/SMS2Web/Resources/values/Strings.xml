@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="start">Start forwarding</string>
+  <string name="stop">Stop forwarding</string>
+  <string name="app_name">SMS2Web</string>
+</resources>
