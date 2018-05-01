@@ -38,7 +38,7 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel>
-                            <TextBlock Name="MessageZone" Text="{Binding MessageString}" Margin="0,5,0,0" TextWrapping="Wrap" Background="Transparent"/>
+                            <TextBox Name="MessageZone" Text="{Binding MessageString}" Margin="0,5,0,0" TextWrapping="Wrap" Background="Transparent" IsReadOnly="True"/>
                             <Separator BorderBrush="Black" BorderThickness="5"></Separator>
                         </StackPanel>
                     </DataTemplate>

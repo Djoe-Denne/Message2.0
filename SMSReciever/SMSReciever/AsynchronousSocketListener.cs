@@ -54,8 +54,18 @@ namespace SMSReceiver
             if (address == null)
             {
                 IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
-                address = ipHostInfo.AddressList[2];
+                foreach (IPAddress addressIt in ipHostInfo.AddressList)
+                {
+                    if (addressIt.GetAddressBytes().Length == 4)
+                    {
+                        address = addressIt;
+                        break;
+                    }
+                }
             }
+            if (address == null)
+                throw new Exception("No network detected");
+            
             return address;
         }
 
