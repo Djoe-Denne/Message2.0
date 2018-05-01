@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SMSdisplayer.Properties"
+        xmlns:local="clr-namespace:SMSdisplayer"
         mc:Ignorable="d"
         Title="SMSDisplayer" Height="450" Width="800" KeyDown="Window_KeyDown" Closing="Window_Closing">
 
@@ -34,13 +34,25 @@
             </Grid.ColumnDefinitions>
 
 
-            <ListBox Name="messagesList"  Grid.Column="0" Grid.Row="1" Margin="10,0,10,10" ItemsSource="{Binding Messages}" BorderBrush="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Foreground="Red" Background="Transparent">
+            <ListBox Name="messagesList"  Grid.Column="0" Grid.Row="1" Margin="10,0,10,10" ItemsSource="{Binding Messages}" BorderBrush="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Foreground="Black" FontSize="30" Background="Transparent" SizeChanged="messagesList_SizeChanged" >
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel>
-                            <TextBox Name="MessageZone" Text="{Binding MessageString}" Margin="0,5,0,0" TextWrapping="Wrap" Background="Transparent" IsReadOnly="True"/>
-                            <Separator BorderBrush="Black" BorderThickness="5"></Separator>
-                        </StackPanel>
+                        <Grid >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"></RowDefinition>
+                                <RowDefinition Height="5"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBox Name="MessageZone" Grid.Column="0" Grid.Row="0" Text="{Binding MessageString}" Margin="0,0,0,0" TextWrapping="Wrap" Background="Transparent" IsReadOnly="True"/>
+
+                            <local:ImageCanvas Name="SmileyCanvas" Grid.Column="0" Grid.Row="0" Margin="0,5,0,0"  >
+                                
+                            </local:ImageCanvas>
+                            <Separator Grid.Column="0" Grid.Row="1" BorderBrush="Black" BorderThickness="5"></Separator>
+                        </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>

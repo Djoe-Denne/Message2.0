@@ -1,7 +1,9 @@
-﻿using System;
+﻿using SMSdisplayer.Utils.Emoji;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace SMSdisplayer
@@ -13,10 +15,13 @@ namespace SMSdisplayer
             public enum MessageType { SMS, MMS };
 
             protected String _messageStr;
+            protected String _messageBase;
             protected Byte[] _buffer;
             protected Guid _id;
 
-            
+            private List< Emoji> emojiList;
+
+
 
             public String MessageString
             {
@@ -24,20 +29,52 @@ namespace SMSdisplayer
                 {
                     return _messageStr;
                 }
+                set
+                {
+                    _messageStr = value;
+                }
+            }
+
+            public String MessageBase
+            {
+                get
+                {
+                    return _messageBase;
+                }
+            }
+
+            public List<Emoji> EmojiList 
+            { 
+                get
+                {
+                    return emojiList;
+                }
+            }
+
+
+            public Message()
+            {
+                _messageStr = "";
+                _id = Guid.NewGuid();
+
+                emojiList = new List<Emoji>();
             }
 
             public Message(Byte[] message)
             {
-                this._buffer = message;
-                this._id = Guid.NewGuid();
+                _buffer = message;
+                _messageStr="";
+                _id = Guid.NewGuid();
 
+                emojiList = new List<Emoji>();
             }
 
             protected Message(String message)
             {
-                this._messageStr = message;
-                this._id = Guid.NewGuid();
+                _messageStr = message;
+                _id = Guid.NewGuid();
 
+                emojiList = new List<Emoji>();
             }
 
 
@@ -49,14 +86,9 @@ namespace SMSdisplayer
                     return;
                 }
 
-                _messageStr = encoder.GetString(_buffer,0, size);
-                
+                _messageBase = encoder.GetString(_buffer,0, size);
 
-                var enc = new UTF32Encoding(true, false);
-                var bytes = enc.GetBytes("🍆");
-                var o = BitConverter.ToString(bytes);
-
-                Console.WriteLine(o);
+                GenerateDisplayedMessage();
             }
 
             protected int GetMessageSize()
@@ -69,6 +101,24 @@ namespace SMSdisplayer
                     }
                 }
                 return 0;
+            }
+
+            private void GenerateDisplayedMessage()
+            {
+                _messageStr = "";
+
+                String[] messageParts = Regex.Split(_messageBase, @"\uD83D[\uDC00-\uDFFF]|\uD83C[\uDC00-\uDFFF]|\uFFFD");
+
+                for(int i = 0; i < messageParts.Length-1; i++)
+                {
+                    string messagePart = messageParts[i];
+                    _messageStr += messagePart;
+                    String currentChar = _messageBase.Substring(_messageStr.Length-(i*2), 2);
+                    string file = EmojiUtils.EmojiFile(currentChar);
+                    emojiList.Add(new Emoji(currentChar, _messageStr.Length, file));
+                    _messageStr += "    ";
+                }
+                _messageStr += messageParts.Last();
             }
         }
     }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
 using SMSdisplayer.Model;
 
 namespace SMSdisplayer.Controler.Message
@@ -39,18 +41,35 @@ namespace SMSdisplayer.Controler.Message
 
                 public virtual void OnNext(Model.Message value)
                 {
-                    value.EncodeMessage(Encoding.Unicode);
                     App.Current.Dispatcher.BeginInvoke((Action)(() =>
                     {
+                        value.EncodeMessage(Encoding.Unicode);
                         messagesQueue.Add(value);
+                        
                     }));
+                    
                 }
 
                 public virtual void Unsubscribe()
                 {
                     unsubscriber.Dispose();
                 }
-                
+
+                internal void CreateSmiley(Canvas canvas, TextBox text, Model.Message message)
+                {
+                    canvas.Children.Clear();
+
+                    List<Emoji> emojis = message.EmojiList;
+
+                    foreach(Emoji emoji in emojis)
+                    {
+                        Rect bBox = text.GetRectFromCharacterIndex(emoji.Index);
+                        emoji.SetBoundingBox(bBox);
+                        canvas.Children.Add( emoji);
+                        
+                    }
+                    canvas.InvalidateVisual();
+                }
             }
         }
     }

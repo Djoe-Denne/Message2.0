@@ -79,8 +79,9 @@
     <Compile Include="FontChooser.xaml.cs">
       <DependentUpon>FontChooser.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ImageCanvas.cs" />
+    <Compile Include="Model\Emoji.cs" />
     <Compile Include="Model\MessagesList.cs" />
-    <Compile Include="Model\Separator.cs" />
     <Compile Include="NetworkOptions.xaml.cs">
       <DependentUpon>NetworkOptions.xaml</DependentUpon>
     </Compile>
@@ -90,6 +91,7 @@
       <DesignTime>True</DesignTime>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Utils\Emoji\EmojiUtils.cs" />
     <Compile Include="Utils\Font\FontFamilyListItem.cs" />
     <Compile Include="Utils\Font\FontSizeListItem.cs" />
     <Compile Include="Utils\Font\NameDictionaryHelper.cs" />

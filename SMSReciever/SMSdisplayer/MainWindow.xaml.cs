@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -40,6 +41,7 @@ namespace SMSdisplayer
             InitializeComponent();
             messages = new MessagesList();
             messagesList.ItemsSource = Messages;
+            ((INotifyCollectionChanged)messagesList.Items).CollectionChanged += Message_CollectionChanged;
 
             messagesObs = new MessagesObs();
             messageBuilder = new MessageBuilder(messages);
@@ -52,7 +54,10 @@ namespace SMSdisplayer
             socketThread.Start();
 
             fullscreen = false;
+
+            
         }
+
 
         public MessagesList Messages { get => messages; set => messages = value; }
 
@@ -110,13 +115,16 @@ namespace SMSdisplayer
                     ResourceManager rm = new ResourceManager("SMSdisplayer.ResourcesStr",Assembly.GetExecutingAssembly());
                     MessageBox.Show(this, rm.GetString("FONT_ERROR"), "ERROR", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
+
+                recomputeColor();
+                recomputeEmoji();
             }
         }
 
         private void NetworkClick(object sender, RoutedEventArgs e)
         {
             NetworkOptions net = new NetworkOptions(AsynchronousSocketListener.GetAddress().ToString(), (int) AsynchronousSocketListener.Port);
-
+            
             net.ShowDialog();
 
             if(net.Success)
@@ -129,12 +137,14 @@ namespace SMSdisplayer
 
                 socketThread = new Thread(() => SMSReceiver.AsynchronousSocketListener.StartListening());
                 socketThread.Start();
+
             }
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            if(e.Key == Key.F5)
+            
+            if (e.Key == Key.F5)
             {
                 if (!fullscreen)
                 {
@@ -162,6 +172,97 @@ namespace SMSdisplayer
             AsynchronousSocketListener.Stop();
 
             socketThread.Join();
+        }
+
+
+        private void Message_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            Task.Factory.StartNew(() =>
+            {
+                System.Threading.Thread.Sleep(100);
+                App.Current.Dispatcher.BeginInvoke((Action)(() =>
+                {
+                    computeEmoji(messages[messages.Count - 1]);
+                }));
+            });
+            
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                // scroll the new item into view   
+                messagesList.ScrollIntoView(e.NewItems[0]);
+            }
+
+        }
+
+        private childItem FindVisualChild<childItem>(DependencyObject obj)
+    where childItem : DependencyObject
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
+            {
+                DependencyObject child = VisualTreeHelper.GetChild(obj, i);
+                if (child != null && child is childItem)
+                    return (childItem)child;
+                else
+                {
+                    childItem childOfChild = FindVisualChild<childItem>(child);
+                    if (childOfChild != null)
+                        return childOfChild;
+                }
+            }
+            return null;
+        }
+        
+        private void messagesList_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            recomputeEmoji();
+        }
+
+        private void recomputeEmoji()
+        {
+            foreach (Message message in messages)
+            {
+                computeEmoji(message);
+            }
+        }
+
+        private void computeEmoji(Message message)
+        {
+
+            ListBoxItem myListBoxItem = (ListBoxItem)(messagesList.ItemContainerGenerator.ContainerFromItem(message));
+
+            // Getting the ContentPresenter of myListBoxItem
+            ContentPresenter myContentPresenter = FindVisualChild<ContentPresenter>(myListBoxItem);
+
+            DataTemplate myDataTemplate = myContentPresenter.ContentTemplate;
+            Canvas canvas = (Canvas)myDataTemplate.FindName("SmileyCanvas", myContentPresenter);
+            TextBox text = (TextBox)myDataTemplate.FindName("MessageZone", myContentPresenter);
+
+
+            messageBuilder.CreateSmiley(canvas, text, message);
+
+        }
+
+        private void recomputeColor()
+        {
+            foreach (Message message in messages)
+            {
+                computeColor(message);
+            }
+        }
+
+        private void computeColor(Message message)
+        {
+
+            ListBoxItem myListBoxItem = (ListBoxItem)(messagesList.ItemContainerGenerator.ContainerFromItem(message));
+
+            // Getting the ContentPresenter of myListBoxItem
+            ContentPresenter myContentPresenter = FindVisualChild<ContentPresenter>(myListBoxItem);
+
+            DataTemplate myDataTemplate = myContentPresenter.ContentTemplate;
+            TextBox text = (TextBox)myDataTemplate.FindName("MessageZone", myContentPresenter);
+
+            text.Foreground = messagesList.Foreground;
+
         }
     }
     
