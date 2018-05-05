@@ -14,16 +14,18 @@ using Android.Widget;
 
 namespace SMS2Web
 {
-    [BroadcastReceiver(Enabled = true, Label = "SMS Receiver")]
     public class SMSBroadcastReceiver : BroadcastReceiver
     {
 
         private const string Tag = "SMSBroadcastReceiver";
         private const string IntentAction = "android.provider.Telephony.SMS_RECEIVED";
+        private static bool listen = false;
+
+        public static bool Listen { get => listen; set => listen = value; }
 
         public override void OnReceive(Context context, Intent intent)
         {
-            if (intent.Action != IntentAction) return;
+            if (intent.Action != IntentAction || !listen) return;
 
             SmsMessage[] messages = Telephony.Sms.Intents.GetMessagesFromIntent(intent);
 

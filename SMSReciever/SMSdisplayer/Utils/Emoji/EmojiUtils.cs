@@ -9,34 +9,64 @@ namespace SMSdisplayer.Utils.Emoji
 {
     class EmojiUtils
     {
+        protected String currentEmojiCode = String.Empty;
 
-        public static string EmojiFile(String character)
+        public string EmojiFile(String character)
         {
             Encoding enc = new UTF32Encoding(true, false);
-            byte[] bytes = enc.GetBytes(character);
-
-            if(bytes.Length < 4)
+                String fileName = string.Empty;
+            if (character != "‍♂️" && character != "‍♀️")
             {
-                return "";
+                byte[] bytes = enc.GetBytes(character);
+
+                if (bytes.Length < 4)
+                {
+                    return "";
+                }
+
+                string charHexCode = BitConverter.ToString(bytes).Replace("-", "");
+
+                while (charHexCode.ElementAt(0) == '0')
+                {
+                    charHexCode = charHexCode.Remove(0, 1);
+                }
+
+                if (charHexCode == String.Empty)
+                {
+                    return "";
+                }
+
+                charHexCode = charHexCode.ToLower();
+
+                fileName = String.Format(".\\Emoji\\emoji_u{0}.png", charHexCode);
+
+                if (!File.Exists(fileName))
+                {
+                    currentEmojiCode += currentEmojiCode == String.Empty ? charHexCode : "_" + charHexCode;
+                }
+                else if (currentEmojiCode == String.Empty)
+                {
+                    currentEmojiCode = "";
+                }
             }
-
-            string charHexCode = BitConverter.ToString(bytes).Replace("-", "");
-
-            while (charHexCode.ElementAt(0) == '0')
+            else if (character == "‍♂️")
             {
-                charHexCode = charHexCode.Remove(0, 1);
+                fileName = String.Format(".\\Emoji\\emoji_u{0}_200d_2642.png", currentEmojiCode);
+                currentEmojiCode = String.Empty;
             }
-
-            if (charHexCode == String.Empty)
+            else if (character == "‍♀️")
             {
-                return "";
+                fileName = String.Format(".\\Emoji\\emoji_u{0}_200d_2640.png", currentEmojiCode);
+                currentEmojiCode = String.Empty;
             }
+            return File.Exists(fileName) ? fileName: String.Empty;
 
-            charHexCode = charHexCode.ToLower();
-
-            String fileName = String.Format(".\\Emoji\\emoji_u{0}.png", charHexCode);
-
-            return File.Exists(fileName) ? fileName : "";
         }
+
+        public bool IsEmojiInConstruction()
+        {
+            return currentEmojiCode != String.Empty;
+        }
+
     }
 }

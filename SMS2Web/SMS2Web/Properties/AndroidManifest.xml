@@ -4,5 +4,11 @@
 	<uses-permission android:name="android.permission.RECEIVE_SMS" />
 	<uses-permission android:name="android.permission.READ_SMS" />
 	<uses-sdk android:minSdkVersion="16" android:targetSdkVersion="16" />
-	<application android:allowBackup="true" android:label="@string/app_name"></application>
+	<application android:allowBackup="true" android:label="@string/app_name">
+  <receiver android:name="md59ab7574348b24555dc62ddea6709902f.SMSBroadcastReceiver"  android:enabled="true">
+    <intent-filter >
+      <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+    </intent-filter>
+  </receiver>
+  </application>
 </manifest>

@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Resources;
 using System.Text;
@@ -86,7 +87,7 @@ namespace SMSdisplayer
                             background.CacheOption = BitmapCacheOption.OnLoad;
                             background.EndInit();
                             background.Freeze();
-                            this.Background = new ImageBrush(background);
+                            Layout.Background = new ImageBrush(background);
                         }
                     }
                 }
@@ -123,13 +124,15 @@ namespace SMSdisplayer
 
         private void NetworkClick(object sender, RoutedEventArgs e)
         {
-            NetworkOptions net = new NetworkOptions(AsynchronousSocketListener.GetAddress().ToString(), (int) AsynchronousSocketListener.Port);
+            IPAddress addr = AsynchronousSocketListener.GetAddress();
+            NetworkOptions net = new NetworkOptions(addr == null ? "" : addr.ToString(), (int) AsynchronousSocketListener.Port);
             
             net.ShowDialog();
 
             if(net.Success)
             {
                 AsynchronousSocketListener.Port = (uint) net.Port;
+                AsynchronousSocketListener.SetAddress(net.Address);
 
                 AsynchronousSocketListener.Stop();
 

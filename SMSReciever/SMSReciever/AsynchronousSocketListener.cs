@@ -62,11 +62,27 @@ namespace SMSReceiver
                         break;
                     }
                 }
-            }
+            }/*
             if (address == null)
-                throw new Exception("No network detected");
+                throw new Exception("No network detected");*/
             
             return address;
+        }
+
+        public static void SetAddress(String addressStr)
+        {
+
+            string[] addressSplit = addressStr.Split('.');
+            
+
+            Byte[] byteAddress = new Byte[addressSplit.Length];
+
+            for (int i = 0; i < byteAddress.Length; i++)
+            {
+                byteAddress[i] = (byte)Int16.Parse(addressSplit[i]);
+            }
+
+            address = new IPAddress(byteAddress);
         }
 
         private static bool Close
@@ -109,7 +125,12 @@ namespace SMSReceiver
             // Establish the local endpoint for the socket.  
             // The DNS name of the computer  
             // running the listener is "host.contoso.com".  
-            
+
+            if (GetAddress() == null)
+            {
+                return;
+            }
+
             IPEndPoint localEndPoint = new IPEndPoint(GetAddress(), (int)Port);
 
             // Create a TCP/IP socket.  

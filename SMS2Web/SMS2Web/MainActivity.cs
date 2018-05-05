@@ -11,14 +11,12 @@ namespace SMS2Web
     public class MainActivity : Activity
     {
         bool state = false;
-        SMSBroadcastReceiver receiver;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             // Set our view from the "main" layout resource
             base.OnCreate(savedInstanceState);
 
-            receiver = new SMSBroadcastReceiver();
             SetContentView(Resource.Layout.Main);
 
             // Get our button from the layout resource,
@@ -30,7 +28,7 @@ namespace SMS2Web
                Button start = FindViewById<Button>(Resource.Id.startButton);
                if (state)
                {
-                   UnregisterReceiver(receiver);
+                   SMSBroadcastReceiver.Listen = false;
                    start.Text = GetString(Resource.String.start);
                    state = false;
                }
@@ -54,12 +52,19 @@ namespace SMS2Web
                        vibrator.Vibrate(100);
                        return;
                    }
-                   this.RegisterReceiver(receiver, new IntentFilter("android.provider.Telephony.SMS_RECEIVED"));
+                   SMSBroadcastReceiver.Listen = true;
                    start.Text = GetString(Resource.String.stop);
                    state = true;
 
                }
             };
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+
+            SMSBroadcastReceiver.Listen = false;
         }
     }
 }

@@ -78,17 +78,25 @@ namespace SMSdisplayer
             }
 
 
-            public void EncodeMessage(Encoding encoder)
+            public bool EncodeMessage(Encoding encoder)
             {
                 int size = GetMessageSize();
                 if (size == 0)
                 {
-                    return;
+                    return false;
                 }
 
-                _messageBase = encoder.GetString(_buffer,0, size);
+                try
+                {
+                    _messageBase = encoder.GetString(_buffer, 0, size);
 
-                GenerateDisplayedMessage();
+                    GenerateDisplayedMessage();
+                }catch(Exception)
+                {
+                    return false;
+                }
+
+                return true;
             }
 
             protected int GetMessageSize()
@@ -106,17 +114,39 @@ namespace SMSdisplayer
             private void GenerateDisplayedMessage()
             {
                 _messageStr = "";
+                bool isSpaced = false;
 
                 String[] messageParts = Regex.Split(_messageBase, @"\uD83D[\uDC00-\uDFFF]|\uD83C[\uDC00-\uDFFF]|\uFFFD");
-
-                for(int i = 0; i < messageParts.Length-1; i++)
+                EmojiUtils emojiFactory = new EmojiUtils();
+                for (int i = 0; i < messageParts.Length-1; i++)
                 {
                     string messagePart = messageParts[i];
                     _messageStr += messagePart;
-                    String currentChar = _messageBase.Substring(_messageStr.Length-(i*2), 2);
-                    string file = EmojiUtils.EmojiFile(currentChar);
-                    emojiList.Add(new Emoji(currentChar, _messageStr.Length, file));
-                    _messageStr += "    ";
+                    int startIndex = _messageStr.Length - (i * 2);
+                    String currentChar = _messageBase.Substring(startIndex < 0? 0:startIndex , 2);
+                    string file = emojiFactory.EmojiFile(currentChar);
+                    if (!isSpaced)
+                    {
+                        _messageStr += "    ";
+                        isSpaced = true;
+                    }
+                    if(file == String.Empty && emojiFactory.IsEmojiInConstruction() && messageParts[i + 1].Length >= 3)
+                    {
+                        String sexChar = messageParts[i + 1].Substring(0, 3);
+                        if(sexChar == "‍♂️" || sexChar == "‍♀️")
+                        {
+                            file = emojiFactory.EmojiFile(sexChar);
+                            messageParts[i + 1] = messageParts[i + 1].Remove(0, 3);
+
+                        }
+                    }
+
+                    if(file == String.Empty)
+                    {
+                        continue;
+                    }
+                    emojiList.Add(new Emoji(currentChar, _messageStr.Length-4, file));
+                    isSpaced = false;
                 }
                 _messageStr += messageParts.Last();
             }

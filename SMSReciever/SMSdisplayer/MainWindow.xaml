@@ -19,7 +19,7 @@
 
         </Menu>
 
-        <Grid Height="Auto" VerticalAlignment="Stretch" DockPanel.Dock="Bottom" >
+        <Grid Name="Layout"  Height="Auto" VerticalAlignment="Stretch" DockPanel.Dock="Bottom" >
             <Grid.Background>
                 <ImageBrush ImageSource="Images\2.0.jpg"></ImageBrush>
             </Grid.Background>
@@ -34,7 +34,9 @@
             </Grid.ColumnDefinitions>
 
 
-            <ListBox Name="messagesList"  Grid.Column="0" Grid.Row="1" Margin="10,0,10,10" ItemsSource="{Binding Messages}" BorderBrush="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Foreground="Black" FontSize="30" Background="Transparent" SizeChanged="messagesList_SizeChanged" >
+            <ListBox Name="messagesList"  Grid.Column="0" Grid.Row="1" Margin="10,0,10,10" ItemsSource="{Binding Messages}" BorderBrush="Transparent" 
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"  Background="Transparent" SizeChanged="messagesList_SizeChanged" 
+                     Foreground="Black" FontSize="54" FontFamily="Calibri" FontWeight="Bold">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid >

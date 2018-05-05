@@ -43,9 +43,17 @@ namespace SMSdisplayer.Controler.Message
                 {
                     App.Current.Dispatcher.BeginInvoke((Action)(() =>
                     {
-                        value.EncodeMessage(Encoding.Unicode);
+                        bool result = value.EncodeMessage(Encoding.Unicode);
+                        if(!result)
+                        {
+                            return;
+                        }
+
                         messagesQueue.Add(value);
-                        
+                        if(messagesQueue.Count > 2)
+                        {
+                            messagesQueue.RemoveAt(0);
+                        }
                     }));
                     
                 }

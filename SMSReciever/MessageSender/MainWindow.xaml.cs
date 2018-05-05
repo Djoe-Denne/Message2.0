@@ -24,7 +24,6 @@ namespace MessageSender
         {
             InitializeComponent();
             AsynchronousSocketSender.SetAddress("192.168.1.48:11000");
-            AsynchronousSocketSender.Send("initfgv,nn,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,n");
         }
 
         private void send_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

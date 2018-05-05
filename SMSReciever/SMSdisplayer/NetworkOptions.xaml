@@ -21,7 +21,7 @@
         </Grid.ColumnDefinitions>
 
         <Label Grid.Column="0" Grid.Row="0">Adresse :</Label>
-        <TextBox Name="AddressText" Grid.Column="1" Grid.Row="0" IsEnabled="False" />
+        <TextBox Name="AddressText" Grid.Column="1" Grid.Row="0"/>
 
         <Label Grid.Column="0" Grid.Row="1">Port :</Label>
         <xctk:IntegerUpDown Name="PortInput" Grid.Column="1" Grid.Row="1"  Value="11000" Minimum="0" Maximum="65535"/>

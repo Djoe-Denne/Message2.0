@@ -20,12 +20,15 @@ namespace SMSdisplayer
     public partial class NetworkOptions : Window
     {
         protected int port;
-        private bool success;
+        private String address;
+        protected bool success;
+
         public int Port
         {
             get => port;
         }
         public bool Success { get => success; set => success = value; }
+        public string Address { get => address;  }
 
         public NetworkOptions(String address, int port)
         {
@@ -39,6 +42,7 @@ namespace SMSdisplayer
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
             port = PortInput.Value.Value;
+            address = AddressText.Text;
             success = true;
             Close();
         }
